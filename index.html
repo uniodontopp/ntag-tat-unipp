@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow"> 
+    <title>Cartão Digital</title> 
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Georama:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- CONFIGURAÇÕES VISUAIS --- */
+        :root {
+            --bg: #810e56;             
+            --shape-cyan: #70cddf;     
+            --shape-dark: #560b49;     
+            
+            /* --- MUDANÇA AQUI: O EFEITO ROXO ESCURO --- */
+            /* Em vez de branco transparente, usamos a cor da marca com 90% de opacidade */
+            --card: rgba(86, 11, 73, 0.9); 
+            
+            --text: #ffffff;           
+            --accent: #ffffff;         
+            --hover-light: #ffffff;    
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body { 
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 0% 0%, var(--shape-cyan) 0%, var(--shape-cyan) 35%, transparent 35.1%),
+                radial-gradient(circle at 80% 110%, var(--shape-dark) 0%, var(--shape-dark) 50%, transparent 50.1%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--text); 
+            font-family: 'Georama', sans-serif;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .bento-grid { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            grid-gap: 12px; 
+            max-width: 400px; 
+            width: 95%; 
+            padding: 20px;
+        }
+
+        .card { 
+            background: var(--card);   
+            border-radius: 28px; 
+            padding: 25px;
+            text-decoration: none; 
+            color: var(--text) !important; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            transition: 0.3s ease; 
+            border: 1px solid var(--glass-border);
+            
+            /* Removi o blur para ficar nítido e sólido como você gostou */
+            cursor: pointer;
+            
+            /* Preparação para animação via JS */
+            opacity: 0; 
+            transform: translateY(20px);
+        }
+
+        .card.visible { animation: reveal 0.8s ease-out forwards; }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--hover-light); 
+            /* MUDANÇA NO HOVER: Fica um roxo um pouco mais claro e vivo */
+            background: rgba(110, 20, 95, 1); 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .full { grid-column: span 2; }
+        .hidden { display: none !important; }
+
+        .profile-pic { 
+            width: 90px; 
+            height: 90px; 
+            border-radius: 50%; 
+            background: linear-gradient(45deg, #aaa, #ddd); 
+            margin-bottom: 15px; 
+            object-fit: cover; 
+            border: 3px solid rgba(255, 255, 255, 0.2); /* Borda um pouco mais grossa */
+        }
+
+        h1 { font-size: 1.5rem; margin: 5px 0; font-weight: 700; text-align: center;}
+        
+        /* Ajuste para o texto do cargo + ícone pequeno */
+        p { font-size: 0.9rem; opacity: 0.9; text-align: center; margin-bottom: 10px; font-weight: 400; display: flex; align-items: center; gap: 6px; justify-content: center; }
+        
+        .label { font-weight: 600; font-size: 0.85rem; color: var(--accent); margin-top: 8px; text-align: center;}
+
+        @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="bento-grid">
+        
+        <a href="" target="_blank" class="card full" id="card-profile">
+            <img src="" alt="Foto de Perfil" class="profile-pic" id="foto-perfil">
+            <h1 id="nome-colaborador">...</h1>
+            <p>
+                <span id="cargo-colaborador">...</span> 
+                <i class="fa-brands fa-linkedin" style="font-size: 0.9em; opacity: 0.7;"></i>
+            </p>
+        </a>
+
+        <div class="card full" id="btn-save-contact" onclick="gerarVcard()">
+            <i class="fa-solid fa-address-card" style="font-size: 1.5rem;"></i>
+            <span class="label">Salvar Contato</span>
+        </div>
+
+        <a href="" class="card" target="_blank" id="link-whatsapp">
+            <i class="fa-brands fa-whatsapp" style="font-size: 2rem;"></i>
+            <span class="label">WhatsApp</span>
+        </a>
+
+        <a href="" class="card" target="_blank" id="link-instagram">
+            <i class="fa-brands fa-instagram" style="font-size: 2rem;"></i>
+            <span class="label">Instagram</span>
+        </a>
+
+        <a href="" class="card full" target="_blank" id="link-dentista">
+            <i class="fa-solid fa-tooth" style="font-size: 2rem;"></i>
+            <span class="label">Encontre seu Dentista</span>
+        </a>
+    </div>
+
+    <script>
+        // ==========================================
+        // ÁREA DE DADOS DO COLABORADOR
+        // ==========================================
+        const colaborador = {
+            nome: "Felipe Andrigo",
+            cargo: "Estagiário em Gestão de Marketing",
+            email: "felipe.andrigo@exemplo.com.br",
+            
+            // Link do seu LinkedIn Pessoal (Vai no Card do Topo)
+            linkedinPessoal: "https://www.linkedin.com/in/felipe-alves-325a4121a/",
+            
+            // Foto do LinkedIn
+            fotoUrl: "https://media.licdn.com/dms/image/v2/D4D03AQEKm9mgWnCChw/profile-displayphoto-crop_800_800/B4DZd95TyVGgAU-/0/1750163865284?e=1771459200&v=beta&t=7uT3OeC28MjI6gmcFlVmcV3pL0TQIKC-6f9NsM8RaRE", 
+            
+            // WhatsApp
+            whatsapp: "5518996475746", 
+            
+            // Instagram Uniodonto
+            instagram: "https://www.instagram.com/uniodontoprudente/", 
+            
+            // Buscador de Dentistas
+            buscaDentista: "https://seguro.fisistemas.com.br/EncontreSeuDentista/pesquisa;s=336017"
+        };
+
+        // ==========================================
+        // LÓGICA DO SISTEMA
+        // ==========================================
+        
+        // 1. Preenche Textos e Links do Perfil
+        document.title = `${colaborador.nome} | Contato`;
+        document.getElementById('nome-colaborador').innerText = colaborador.nome;
+        document.getElementById('cargo-colaborador').innerText = colaborador.cargo;
+        
+        // Configura o link do Card de Perfil
+        const cardProfile = document.getElementById('card-profile');
+        if(colaborador.linkedinPessoal) {
+            cardProfile.href = colaborador.linkedinPessoal;
+        } else {
+            // Se não tiver link, remove o comportamento de clique
+            cardProfile.removeAttribute('href');
+            cardProfile.style.cursor = 'default';
+        }
+
+        // 2. Carrega Foto
+        const imgElement = document.getElementById('foto-perfil');
+        if (colaborador.fotoUrl && colaborador.fotoUrl.length > 10) {
+            imgElement.src = colaborador.fotoUrl;
+        } else {
+            imgElement.style.display = 'none';
+            const divIcon = document.createElement('div');
+            divIcon.className = 'profile-pic';
+            divIcon.innerHTML = '<i class="fa-solid fa-user" style="font-size:40px; color:#fff; display:flex; justify-content:center; align-items:center; height:100%;"></i>';
+            cardProfile.insertBefore(divIcon, cardProfile.children[0]);
+        }
+
+        // 3. Configura Botões Inferiores
+        const configBtn = (id, link, prefix = '') => {
+            const el = document.getElementById(id);
+            if(link) el.href = prefix + link;
+            else el.classList.add('hidden');
+        };
+
+        configBtn('link-whatsapp', colaborador.whatsapp, 'https://wa.me/');
+        configBtn('link-instagram', colaborador.instagram);
+        configBtn('link-dentista', colaborador.buscaDentista);
+
+        // 4. Animação em Cascata
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            if(!card.classList.contains('hidden')){
+                card.style.animationDelay = `${index * 0.15}s`;
+                card.classList.add('visible');
+            }
+        });
+
+        // 5. Gerar vCard
+        function gerarVcard() {
+            // Para o vCard, usamos o link do LinkedIn Pessoal se houver, ou Insta
+            const socialLink = colaborador.linkedinPessoal || colaborador.instagram;
+            
+            const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${colaborador.nome}\nTITLE:${colaborador.cargo}\nTEL;TYPE=CELL:${colaborador.whatsapp}\nEMAIL:${colaborador.email}\nURL:${socialLink}\nEND:VCARD`;
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(new Blob([vcard], { type: 'text/vcard' }));
+            link.download = `${colaborador.nome}.vcf`;
+            link.click();
+        }
+    </script>
+</body>
+</html>
