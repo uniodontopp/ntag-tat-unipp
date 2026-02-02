@@ -19,8 +19,7 @@
             --shape-cyan: #70cddf;     
             --shape-dark: #560b49;     
             
-            /* --- MUDANÇA AQUI: O EFEITO ROXO ESCURO --- */
-            /* Em vez de branco transparente, usamos a cor da marca com 90% de opacidade */
+            /* Visual Roxo Escuro Sólido */
             --card: rgba(86, 11, 73, 0.9); 
             
             --text: #ffffff;           
@@ -67,8 +66,6 @@
             align-items: center;
             transition: 0.3s ease; 
             border: 1px solid var(--glass-border);
-            
-            /* Removi o blur para ficar nítido e sólido como você gostou */
             cursor: pointer;
             
             /* Preparação para animação via JS */
@@ -81,7 +78,6 @@
         .card:hover { 
             transform: translateY(-5px); 
             border-color: var(--hover-light); 
-            /* MUDANÇA NO HOVER: Fica um roxo um pouco mais claro e vivo */
             background: rgba(110, 20, 95, 1); 
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
@@ -96,12 +92,11 @@
             background: linear-gradient(45deg, #aaa, #ddd); 
             margin-bottom: 15px; 
             object-fit: cover; 
-            border: 3px solid rgba(255, 255, 255, 0.2); /* Borda um pouco mais grossa */
+            border: 3px solid rgba(255, 255, 255, 0.2);
         }
 
         h1 { font-size: 1.5rem; margin: 5px 0; font-weight: 700; text-align: center;}
         
-        /* Ajuste para o texto do cargo + ícone pequeno */
         p { font-size: 0.9rem; opacity: 0.9; text-align: center; margin-bottom: 10px; font-weight: 400; display: flex; align-items: center; gap: 6px; justify-content: center; }
         
         .label { font-weight: 600; font-size: 0.85rem; color: var(--accent); margin-top: 8px; text-align: center;}
@@ -118,7 +113,7 @@
             <h1 id="nome-colaborador">...</h1>
             <p>
                 <span id="cargo-colaborador">...</span> 
-                <i class="fa-brands fa-linkedin" style="font-size: 0.9em; opacity: 0.7;"></i>
+                <i class="fa-brands fa-linkedin" id="icone-linkedin-perfil" style="font-size: 0.9em; opacity: 0.7; display: none;"></i>
             </p>
         </a>
 
@@ -145,26 +140,26 @@
 
     <script>
         // ==========================================
-        // ÁREA DE DADOS DO COLABORADOR
+        // ÁREA DE DADOS DA COLABORADORA
         // ==========================================
         const colaborador = {
-            nome: "Felipe Andrigo",
-            cargo: "Estagiário em Gestão de Marketing",
-            email: "felipe.andrigo@exemplo.com.br",
+            nome: "Tatiana Magnezi",
+            cargo: "Rede Prestadora",
             
-            // Link do seu LinkedIn Pessoal (Vai no Card do Topo)
-            linkedinPessoal: "https://www.linkedin.com/in/felipe-alves-325a4121a/",
+            // E-mail genérico (ajuste se necessário)
+            email: "tatiana.magnezi@exemplo.com.br", 
             
-            // Foto do LinkedIn
-            fotoUrl: "https://media.licdn.com/dms/image/v2/D4D03AQEKm9mgWnCChw/profile-displayphoto-crop_800_800/B4DZd95TyVGgAU-/0/1750163865284?e=1771459200&v=beta&t=7uT3OeC28MjI6gmcFlVmcV3pL0TQIKC-6f9NsM8RaRE", 
+            // Link do LinkedIn
+            linkedinPessoal: "https://www.linkedin.com/in/tatiana-magnezi-a04223182/",
+            
+            // Foto da Tatiana
+            fotoUrl: "https://media.licdn.com/dms/image/v2/C4E03AQFAixbUnfZ1DQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1552246954810?e=1771459200&v=beta&t=eGwgN1-ZINjf7amugKVPvV9g7aKpZ6S-X1yf3v5JR2s", 
             
             // WhatsApp
-            whatsapp: "5518996475746", 
+            whatsapp: "5518996916484", 
             
-            // Instagram Uniodonto
+            // Links Padrão
             instagram: "https://www.instagram.com/uniodontoprudente/", 
-            
-            // Buscador de Dentistas
             buscaDentista: "https://seguro.fisistemas.com.br/EncontreSeuDentista/pesquisa;s=336017"
         };
 
@@ -172,22 +167,21 @@
         // LÓGICA DO SISTEMA
         // ==========================================
         
-        // 1. Preenche Textos e Links do Perfil
         document.title = `${colaborador.nome} | Contato`;
         document.getElementById('nome-colaborador').innerText = colaborador.nome;
         document.getElementById('cargo-colaborador').innerText = colaborador.cargo;
         
-        // Configura o link do Card de Perfil
         const cardProfile = document.getElementById('card-profile');
+        const iconProfile = document.getElementById('icone-linkedin-perfil');
         if(colaborador.linkedinPessoal) {
             cardProfile.href = colaborador.linkedinPessoal;
+            iconProfile.style.display = 'inline-block'; 
         } else {
-            // Se não tiver link, remove o comportamento de clique
             cardProfile.removeAttribute('href');
             cardProfile.style.cursor = 'default';
+            iconProfile.style.display = 'none';
         }
 
-        // 2. Carrega Foto
         const imgElement = document.getElementById('foto-perfil');
         if (colaborador.fotoUrl && colaborador.fotoUrl.length > 10) {
             imgElement.src = colaborador.fotoUrl;
@@ -199,7 +193,6 @@
             cardProfile.insertBefore(divIcon, cardProfile.children[0]);
         }
 
-        // 3. Configura Botões Inferiores
         const configBtn = (id, link, prefix = '') => {
             const el = document.getElementById(id);
             if(link) el.href = prefix + link;
@@ -210,7 +203,6 @@
         configBtn('link-instagram', colaborador.instagram);
         configBtn('link-dentista', colaborador.buscaDentista);
 
-        // 4. Animação em Cascata
         const cards = document.querySelectorAll('.card');
         cards.forEach((card, index) => {
             if(!card.classList.contains('hidden')){
@@ -219,11 +211,8 @@
             }
         });
 
-        // 5. Gerar vCard
         function gerarVcard() {
-            // Para o vCard, usamos o link do LinkedIn Pessoal se houver, ou Insta
             const socialLink = colaborador.linkedinPessoal || colaborador.instagram;
-            
             const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${colaborador.nome}\nTITLE:${colaborador.cargo}\nTEL;TYPE=CELL:${colaborador.whatsapp}\nEMAIL:${colaborador.email}\nURL:${socialLink}\nEND:VCARD`;
             const link = document.createElement('a');
             link.href = URL.createObjectURL(new Blob([vcard], { type: 'text/vcard' }));
